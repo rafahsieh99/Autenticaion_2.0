@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel JWT - Sistema de Autenticación</title>
+</head>
+<body>
+    <h1>Panel de Control (JWT)</h1>
+    
+    <h2>Información del Usuario</h2>
+    <p>Correo: {{ user.email }}</p>
+    <p>Rol: {{ user.role_name }}</p>
+    <p>Cuenta Creada: {{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+    <h2>Tu Token JWT</h2>
+    <textarea rows="5" cols="50" readonly>{{ token }}</textarea>
+    <p><small>Este token expirará en 24 horas, guárdalo .</small></p>
+
+    {% if user.role_name == 'admin' and all_users %}
+        <h2>Lista de Usuarios Registrados</h2>
+        <table border="1">
+            <tr>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Fecha de Registro</th>
+                <th>Estado</th>
+                <th>Intentos Fallidos</th>
+            </tr>
+            {% for u in all_users %}
+                <tr>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.role_name }}</td>
+                    <td>{{ u.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{% if u.is_locked %}Bloqueado{% else %}Activo{% endif %}</td>
+                    <td>{{ u.failed_login_attempts }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <p>
+        <a href="{{ url_for('index') }}">Volver al Inicio</a>
+    </p>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel de Control - Sistema de Autenticación</title>
+</head>
+<body>
+    <h1>Panel de Control</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>Información del Usuario</h2>
+    <p>Correo: {{ user.email }}</p>
+    <p>Rol: {{ user.role_name }}</p>
+    <p>Cuenta Creada: {{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+    {% if user.role_name == 'admin' and all_users %}
+        <h2>Lista de Usuarios Registrados</h2>
+        <table border="1">
+            <tr>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Fecha de Registro</th>
+                <th>Estado</th>
+                <th>Intentos Fallidos</th>
+                <th>Acciones</th>
+            </tr>
+            {% for u in all_users %}
+                {% if u.id != user.id %}  <!-- No mostrar el botón eliminar para el usuario actual -->
+                    <tr>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.role_name }}</td>
+                        <td>{{ u.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{% if u.is_locked %}Bloqueado{% else %}Activo{% endif %}</td>
+                        <td>{{ u.failed_login_attempts }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_user', user_id=u.id) }}" style="display: inline;">
+                                {{ form.csrf_token }}
+                                <input type="submit" value="Eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                            </form>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <p>
+        <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+    </p>
+</body>
+</html>

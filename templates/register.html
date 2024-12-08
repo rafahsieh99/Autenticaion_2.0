@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro - Sistema de Autenticación</title>
+</head>
+<body>
+    <h1>Registro de Usuario</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.csrf_token }}
+        <p>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+        </p>
+        <p>
+            <input type="password" name="password" placeholder="Contraseña" required>
+        </p>
+        <p>
+            <select name="role" required>
+                <option value="user">Usuario Normal</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </p>
+        <p>
+            <button type="submit">Registrarse</button>
+        </p>
+    </form>
+    <p>
+        <a href="{{ url_for('index') }}">Volver al Inicio</a>
+    </p>
+</body>
+</html>
